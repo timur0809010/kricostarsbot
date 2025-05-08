@@ -784,6 +784,11 @@ def set_balance(message):
         bot.reply_to(message, f"❌ Пользователь `{user_id}` не найден в базе.", parse_mode="Markdown")
 
 
+@bot.message_handler(commands=['dump'])
+def dump_db(message):
+    if message.from_user.id != Admin: return  # Только админ
+    db = load_db()
+    bot.send_document(message.chat.id, open(JSON_DB, 'rb'))
 
 
 if __name__ == "__main__":
