@@ -791,6 +791,25 @@ def dump_db(message):
     bot.send_document(message.chat.id, open(JSON_DB, 'rb'))
 
 
+@bot.message_handler(commands=['reward'])
+def set_reward(message):
+    global Referral_reward
+    if message.from_user.id != Admin:
+        return bot.reply_to(message, "⛔ У вас нет доступа к этой команде.")
+    
+    try:
+        parts = message.text.strip().split()
+        if len(parts) != 2:
+            return bot.reply_to(message, "❗ Использование: /reward 1.5")
+
+        new_reward = float(parts[1])
+        Referral_reward = new_reward
+        bot.reply_to(message, f"✅ Награда за реферала обновлена: {Referral_reward} ⭐")
+    except ValueError:
+        bot.reply_to(message, "❌ Введите корректное число. Пример: `/reward 1.5`", parse_mode="Markdown")
+
+
+
 if __name__ == "__main__":
     print("Бот запущен!")
     bot.infinity_polling()
