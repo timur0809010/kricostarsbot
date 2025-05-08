@@ -10,9 +10,9 @@ BOT_TOKEN = "7623841408:AAG1I5MemPWxh03eJ2cw7g_fl2Er8j57MdU"
 JSON_DB = "database.json"
 
 #Спонсоры в таком формате ["@stargiverfree", "https://t.me/+sFYzeMzMVYs3Y2Uy @daillystar"]
-Sponsor = ["@Kricochnl", 'https://t.me/+TLV1BOssI7llNTVi @startfalls', 'https://t.me/+h1UM0iAXBGpmNmQ6 @Stars_draw_NFT' ]
+Sponsor = ["@Kricochnl", 'https://t.me/+TLV1BOssI7llNTVi @startfalls', 'https://t.me/+h1UM0iAXBGpmNmQ6 @Stars_draw_NFT', ]
 #спонсоры с заявкам
-Sponsorv2 = ["https://t.me/+1TGs1Vh7JI83MTAy", "https://t.me/giftsbattle_bot?startapp=ref_Zi5LuyDZ6"]
+Sponsorv2 = ["https://t.me/+1TGs1Vh7JI83MTAy", "https://t.me/+yVyBCnAJnUU1ZjIy"]
 #Канал с выплатами
 Withdraw_channel = ["@viplatykricostars"]
 #Награда за реферала 
@@ -568,8 +568,9 @@ def bot_info(message):
     user_id = message.from_user.id
     db = load_db()
     
-    total_users = len(db)
-    total_balance = sum(user_data.get("balance", 0) for user_data in db.get("users", {}).values())
+    total_users = len([uid for uid in db if uid.isdigit()])
+    total_balance = sum(user_data.get("balance", 0) for uid, user_data in db.items() if uid.isdigit())
+
 
     
     text = (
@@ -598,7 +599,6 @@ def bot_info(message):
         process_referral(user_id, db)
         
         markup = InlineKeyboardMarkup()
-        bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
         main_menu(user_id)
         buttons_row = []
         if Developer:
@@ -608,13 +608,15 @@ def bot_info(message):
         
         if buttons_row:
             markup.row(*buttons_row)
-        
         buttons_row = []
+
         if Withdraw_channel and Withdraw_channel[0]:
             buttons_row.append(InlineKeyboardButton("💸 Выплаты", url=f"https://t.me/{Withdraw_channel[0].replace('@', '')}"))
+
         buttons_row.append(InlineKeyboardButton("🏆 Топ рефералов", callback_data="top_referrals"))
         
         markup.row(*buttons_row)
+        bot.send_message(user_id, text, reply_markup=markup, parse_mode="Markdown")
         
         
         
@@ -647,7 +649,6 @@ def show_top_referrals(call):
     
     bot.send_message(
         chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
         text=text,
         parse_mode="Markdown"
     )
@@ -754,6 +755,36 @@ def handle_post_confirmation(call):
     
     bot.send_message(Admin, f"✅ Рассылка завершена!\nОтправлено: {sent_count}/{total_users} пользователей")
     pending_post.clear()
+
+
+@bot.message_handler(commands=["set_balance"])
+def set_balance(message):
+    if message.from_user.id != Admin:
+        return
+
+    parts = message.text.split()
+    if len(parts) != 3:
+        bot.reply_to(message, "❗ Использование: `/set_balance <user_id> <сумма>`", parse_mode="Markdown")
+        return
+
+    user_id, new_balance = parts[1], parts[2]
+    try:
+        new_balance = float(new_balance)
+    except ValueError:
+        bot.reply_to(message, "❗ Сумма должна быть числом.", parse_mode="Markdown")
+        return
+
+    db = load_db()
+
+    if user_id in db:
+        db[user_id]["balance"] = new_balance
+        save_db(db)
+        bot.reply_to(message, f"✅ Баланс пользователя `{user_id}` обновлён: {new_balance}⭐", parse_mode="Markdown")
+    else:
+        bot.reply_to(message, f"❌ Пользователь `{user_id}` не найден в базе.", parse_mode="Markdown")
+
+
+
 
 if __name__ == "__main__":
     print("Бот запущен!")
