@@ -10,9 +10,9 @@ BOT_TOKEN = "7623841408:AAG1I5MemPWxh03eJ2cw7g_fl2Er8j57MdU"
 JSON_DB = "database.json"
 
 #Спонсоры в таком формате ["@stargiverfree", "https://t.me/+sFYzeMzMVYs3Y2Uy @daillystar"]
-Sponsor = ["@Kricochnl", 'https://t.me/+TLV1BOssI7llNTVi @startfalls', 'https://t.me/+h1UM0iAXBGpmNmQ6 @Stars_draw_NFT', ]
+Sponsor = ["@Kricochnl", 'https://t.me/+TLV1BOssI7llNTVi @startfalls', 'https://t.me/+h1UM0iAXBGpmNmQ6 @Stars_draw_NFT' ]
 #спонсоры с заявкам
-Sponsorv2 = ["https://t.me/+1TGs1Vh7JI83MTAy", "https://t.me/+yVyBCnAJnUU1ZjIy"]
+Sponsorv2 = ["https://t.me/+aKEJWP4BdUAxYzEy", "https://t.me/+yVyBCnAJnUU1ZjIy", "https://t.me/+BNonNGn4CMthNzg6"]
 #Канал с выплатами
 Withdraw_channel = ["@viplatykricostars"]
 #Награда за реферала 
