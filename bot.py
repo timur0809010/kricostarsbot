@@ -130,7 +130,7 @@ def start(message):
                     btn_text = f"Подписаться {parts[1]}"
                     markup.add(InlineKeyboardButton(btn_text, url=url))
                 else:
-                    markup.add(InlineKeyboardButton("Подписаться", url=sponsor))
+                    markup.add(InlineKeyboardButton("Подписаться"))
             else:
                 markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
 
