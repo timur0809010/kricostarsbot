@@ -490,9 +490,14 @@ def check_task(user_id: int, channel_info: str) -> bool:
 
 @bot.callback_query_handler(func=lambda call: call.data == "withdraw")
 def withdraw(call):
-    user_id = call.from_user.id
+    user_id = str(call.from_user.id)
     db = load_db()
-    balance = db.get(str(user_id), {}).get("balance", 0)
+    balance = db.get(user_id, {}).get("balance", 0)
+    referrals = db.get(user_id, {}).get("referrals", [])
+
+    if len(referrals) < 10:
+        bot.answer_callback_query(call.id, "❌ Для вывода нужно минимум 10 рефералов!")
+        return
 
     markup = InlineKeyboardMarkup(row_width=2)
     markup.add(
@@ -508,19 +513,26 @@ def withdraw(call):
         reply_markup=markup
     )
 
+
 @bot.callback_query_handler(func=lambda call: call.data.startswith("withdraw_"))
 def process_withdraw(call):
-    user_id = call.from_user.id
+    user_id = str(call.from_user.id)
     db = load_db()
-    balance = db.get(str(user_id), {}).get("balance", 0)
-    
+    user_data = db.get(user_id, {})
+    balance = user_data.get("balance", 0)
+    referrals = user_data.get("referrals", [])
+
+    if len(referrals) < 10:
+        bot.answer_callback_query(call.id, "❌ Для вывода нужно минимум 10 рефералов!")
+        return
+
     amount = int(call.data.split("_")[1])
-    
+
     if balance < amount:
         bot.answer_callback_query(call.id, f"❌ Недостаточно средств! Ваш баланс: {balance:.2f} stars")
         return
-    
-    db[str(user_id)]["balance"] -= amount
+
+    db[user_id]["balance"] -= amount
     save_db(db)
 
     markup = InlineKeyboardMarkup()
@@ -535,23 +547,24 @@ def process_withdraw(call):
         f"▫️ *ID*: `{user_id}`\n"
         f"▫️ *Юзернейм*: @{call.from_user.username}\n"
         f"▫️ *Баланс*: `{balance:.2f} stars`\n"
-        f"▫️ *Рефералов*: `{len(db[str(user_id)]['referrals'])}`\n"
+        f"▫️ *Рефералов*: `{len(referrals)}`\n"
         f"▫️ *Сумма*: `{amount:.2f} stars`"
     )
     user_text = (
-        f"📌 *Вы отправили заявку на вывод {amount:.2f}, c вашего баланса списано {amount:.2f} звёзд. Ожидайте вывода.*\n"
+        f"📌 *Вы отправили заявку на вывод {amount:.2f} stars, с вашего баланса списано {amount:.2f} звёзд. Ожидайте вывода.*"
     )
     bot.send_message(Admin, admin_text, reply_markup=markup, parse_mode="Markdown")
-    bot.send_message(user_id, user_text, parse_mode="Markdown")
+    bot.send_message(call.from_user.id, user_text, parse_mode="Markdown")
     bot.answer_callback_query(call.id, f"✅ Заявка на вывод {amount} stars отправлена!")
+
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith(("approve_", "reject_")))
 def admin_actions(call):
     parts = call.data.split("_")
     action = parts[0]
     user_id = parts[1]
-    amount = float(parts[2]) if len(parts) > 2 else Withdraw_min
-    
+    amount = float(parts[2])
+
     db = load_db()
 
     if action == "approve":
@@ -562,6 +575,7 @@ def admin_actions(call):
         save_db(db)
         bot.send_message(int(user_id), f"❌ Ваша заявка на вывод {amount} stars отклонена!")
         bot.answer_callback_query(call.id, "❌ Заявка отклонена!")
+
 
 @bot.message_handler(func=lambda msg: msg.text == "📝 Информация")
 def bot_info(message):
