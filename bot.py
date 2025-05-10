@@ -132,13 +132,13 @@ def start(message):
                 else:
                     markup.add(InlineKeyboardButton("Подписаться", url=sponsor))
             else:
-                markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
+                markup.add(InlineKeyboardButton(f"Подписаться ", url=f"https://t.me/{sponsor.replace('@', '')}"))
 
         for sponsor in Sponsorv2:
             if sponsor.startswith("https://t.me/"):
                 markup.add(InlineKeyboardButton("Подписаться ", url=sponsor))
             else:
-                markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
+                markup.add(InlineKeyboardButton(f"Подписаться", url=f"https://t.me/{sponsor.replace('@', '')}"))
 
         markup.add(InlineKeyboardButton("✅ Проверить подписку", callback_data="check_sub"))
         bot.send_message(user_id, "📢 Подпишитесь на спонсоров, чтобы продолжить:", reply_markup=markup)
