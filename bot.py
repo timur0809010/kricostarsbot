@@ -224,7 +224,7 @@ def profile(message):
                     btn_text = f"Подписаться {parts[1]}"
                     sub_markup.add(InlineKeyboardButton(btn_text, url=url))
             else:
-                sub_markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
+                sub_markup.add(InlineKeyboardButton(f"Подписаться", url=f"https://t.me/{sponsor.replace('@', '')}"))
         sub_markup.add(InlineKeyboardButton("✅ Проверить подписку", callback_data="check_sub"))
         bot.send_message(user_id, "📢 Подпишитесь на спонсоров, чтобы продолжить:", reply_markup=sub_markup)
     else:
@@ -606,7 +606,7 @@ def bot_info(message):
                     btn_text = f"Подписаться {parts[1]}"
                     markup.add(InlineKeyboardButton(btn_text, url=url))
             else:
-                markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
+                markup.add(InlineKeyboardButton(f"Подписаться ", url=f"https://t.me/{sponsor.replace('@', '')}"))
         markup.add(InlineKeyboardButton("✅ Проверить подписку", callback_data="check_sub"))
         bot.send_message(user_id, "📢 Подпишитесь на спонсоров, чтобы продолжить:", reply_markup=markup)
     else:
@@ -690,7 +690,7 @@ def partners(message):
                     btn_text = f"Подписаться {parts[1]}"
                     markup.add(InlineKeyboardButton(btn_text, url=url))
             else:
-                markup.add(InlineKeyboardButton(f"Подписаться {sponsor}", url=f"https://t.me/{sponsor.replace('@', '')}"))
+                markup.add(InlineKeyboardButton(f"Подписаться ", url=f"https://t.me/{sponsor.replace('@', '')}"))
         markup.add(InlineKeyboardButton("✅ Проверить подписку", callback_data="check_sub"))
         bot.send_message(user_id, "📢 Подпишитесь на спонсоров, чтобы продолжить:", reply_markup=markup)
     else:
